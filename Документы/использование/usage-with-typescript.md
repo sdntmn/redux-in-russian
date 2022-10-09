@@ -11,32 +11,32 @@ hide_title: true
 
 :::tip What You'll Learn
 
-- Details on how to use each Redux Toolkit API with TypeScript
+- Подробная информация о том, как использовать каждый API-интерфейс Redux Toolkit с TypeScript
 
 :::
 
 ## Introduction
 
-Redux Toolkit is written in TypeScript, and its API is designed to enable great integration with TypeScript applications.
+Redux Toolkit написан на TypeScript, а его API разработан для обеспечения отличной интеграции с приложениями TypeScript.
 
-This page provides specific details for each of the different APIs included in Redux Toolkit and how to type them correctly with TypeScript.
+На этой странице приведены конкретные сведения о каждом из различных API, включенных в Redux Toolkit, и о том, как правильно вводить их с помощью TypeScript.
 
-**See the [TypeScript Quick Start tutorial page](../tutorials/typescript.md) for a brief overview of how to set up and use Redux Toolkit and React Redux to work with TypeScript**.
+**Смотрите [TypeScript Quick Start tutorial page](../tutorials/typescript.md) для получения краткого обзора того, как настроить и использовать Redux Toolkit и React Redux для работы с TypeScript.**.
 
 :::info
 
-If you encounter any problems with the types that are not described on this page, please [open an issue](https://github.com/reduxjs/redux-toolkit/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) for discussion.
+Если у вас возникнут какие-либо проблемы с типами, которые не описаны на этой странице, пожалуйста [open an issue](https://github.com/reduxjs/redux-toolkit/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) для обсуждения.
 
 :::
 
 ## `configureStore`
 
-The basics of using `configureStore` are shown in [TypeScript Quick Start tutorial page](../tutorials/typescript.md). Here are some additional details that you might find useful.
+Основы использования configureStoreприведены на [TypeScript Quick Start tutorial page](../tutorials/typescript.md). Вот некоторые дополнительные сведения, которые могут оказаться вам полезными.
 
-### Getting the `State` type
+### Getting the `State` type (Получение State типа)
 
-The easiest way of getting the `State` type is to define the root reducer in advance and extract its `ReturnType`.  
-It is recommended to give the type a different name like `RootState` to prevent confusion, as the type name `State` is usually overused.
+Самый простой способ получить `State` тип - заранее определить корневой редуктор и извлечь его `ReturnType`.
+Рекомендуется присвоить типу другое имя, `RootState` чтобы избежать путаницы, поскольку имя типа `State` обычно используется слишком часто.
 
 ```typescript
 import { combineReducers } from '@reduxjs/toolkit'
@@ -46,7 +46,7 @@ export type RootState = ReturnType<typeof rootReducer>
 // highlight-end
 ```
 
-Alternatively, if you choose to not create a `rootReducer` yourself and instead pass the slice reducers directly to `configureStore()`, you need to slightly modify the typing to correctly infer the root reducer:
+В качестве альтернативы, если вы решите не создавать a `rootReducer` самостоятельно, а вместо этого передавать редукторы фрагментов напрямую `configureStore()`, вам нужно немного изменить типизацию, чтобы правильно определить корневой редуктор:
 
 ```ts
 import { configureStore } from '@reduxjs/toolkit'
@@ -62,8 +62,8 @@ export type RootState = ReturnType<typeof store.getState>
 export default store
 ```
 
-If you pass the reducers directly to `configureStore()` and do not define the root reducer explicitly, there is no reference to `rootReducer`. 
-Instead, you can refer to `store.getState`, in order to get the `State` type.
+Если вы передаете редукторы напрямую `configureStore()` и не определяете корневой редуктор явно, ссылки на него нет `rootReducer`. 
+Вместо этого вы можете обратиться к `store.getState`, чтобы получить `State` тип.
 
 ```typescript
 import { configureStore } from '@reduxjs/toolkit'
