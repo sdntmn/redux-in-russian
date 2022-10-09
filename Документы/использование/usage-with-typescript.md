@@ -7,15 +7,11 @@ hide_title: true
 
 &nbsp;
 
-# Usage With TypeScript
-
-:::tip What You'll Learn
+# Usage With TypeScript (Использование с TypeScript)
 
 - Подробная информация о том, как использовать каждый API-интерфейс Redux Toolkit с TypeScript
 
-:::
-
-## Introduction
+## Introduction (Введение)
 
 Redux Toolkit написан на TypeScript, а его API разработан для обеспечения отличной интеграции с приложениями TypeScript.
 
@@ -77,7 +73,7 @@ export type RootState = ReturnType<typeof store.getState>
 
 ### Getting the `Dispatch` type
 
-If you want to get the `Dispatch` type from your store, you can extract it after creating the store. It is recommended to give the type a different name like `AppDispatch` to prevent confusion, as the type name `Dispatch` is usually overused. You may also find it to be more convenient to export a hook like `useAppDispatch` shown below, then using it wherever you'd call `useDispatch`.
+Если вы хотите получить `Dispatch` тип из своего хранилища, вы можете извлечь его после создания хранилища. Рекомендуется присвоить типу другое имя, `AppDispatch` чтобы избежать путаницы, поскольку имя типа `Dispatch` обычно используется слишком часто. Вы также можете счесть более удобным экспортировать хук, как `useAppDispatch` показано ниже, а затем использовать его везде, куда бы вы ни позвонили `useDispatch`.
 
 ```typescript
 import { configureStore } from '@reduxjs/toolkit'
@@ -90,17 +86,17 @@ const store = configureStore({
 
 // highlight-start
 export type AppDispatch = typeof store.dispatch
-export const useAppDispatch: () => AppDispatch = useDispatch // Export a hook that can be reused to resolve types
+export const useAppDispatch: () => AppDispatch = useDispatch // Экспортирует перехват, который можно повторно использовать для разрешения типов
 // highlight-end
 
 export default store
 ```
 
-### Correct typings for the `Dispatch` type
+### Correct typings for the `Dispatch` type (Правильные типизации для Dispatchтипа)
 
-The type of the `dispatch` function type will be directly inferred from the `middleware` option. So if you add _correctly typed_ middlewares, `dispatch` should already be correctly typed.
+Тип типа `dispatch` функции будет напрямую выведен из `middleware` параметра. Итак, если вы добавляете правильно введенные промежуточные программы, `dispatch` они уже должны быть правильно введены.
 
-As TypeScript often widens array types when combining arrays using the spread operator, we suggest using the `.concat(...)` and `.prepend(...)` methods of the `MiddlewareArray` returned by `getDefaultMiddleware()`.
+Поскольку TypeScript часто расширяет типы массивов при объединении массивов с помощью оператора spread, мы предлагаем использовать методы `.concat(...)` и `.prepend(...)` `MiddlewareArray` возвращаемого by `getDefaultMiddleware()`.
 
 ```ts
 import { configureStore } from '@reduxjs/toolkit'
@@ -117,15 +113,15 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .prepend(
-        // correctly typed middlewares can just be used
+        // использование промежуточной ПРОГРАММЫ 
         additionalMiddleware,
-        // you can also type middlewares manually
+        // вы также можете ввести промежуточные программы вручную
         untypedMiddleware as Middleware<
           (action: Action<'specialAction'>) => number,
           RootState
         >
       )
-      // prepend and concat calls can be chained
+      // вызовы prepend и concat могут быть объединены в цепочку
       .concat(logger),
   // highlight-end
 })
@@ -135,13 +131,13 @@ export type AppDispatch = typeof store.dispatch
 export default store
 ```
 
-#### Using `MiddlewareArray` without `getDefaultMiddleware`
+#### Using `MiddlewareArray` without `getDefaultMiddleware` (Использование MiddlewareArray без getDefaultMiddleware)
 
-If you want to skip the usage of `getDefaultMiddleware` altogether, you can still use `MiddlewareArray` for type-safe concatenation of your `middleware` array. This class extends the default JavaScript `Array` type, only with modified typings for `.concat(...)` and the additional `.prepend(...)` method.
+Если вы хотите вообще отказаться от использования `getDefaultMiddleware`, вы все равно можете использовать `MiddlewareArray` для типобезопасной конкатенации вашего `middleware` массива. Этот класс расширяет `Array` тип JavaScript по умолчанию, только с измененными наборами для `.concat(...)` и дополнительным `.prepend(...)` методом.
 
-This is generally not required though, as you will probably not run into any array-type-widening issues as long as you are using `as const` and do not use the spread operator.
+Однако, как правило, это не требуется, так как вы, вероятно, не столкнетесь с какими-либо проблемами с расширением типа массива, пока вы используете `as const` и не используете оператор spread .
 
-So the following two calls would be equivalent:
+Таким образом, следующие два вызова будут эквивалентны:
 
 ```ts
 import { configureStore, MiddlewareArray } from '@reduxjs/toolkit'
@@ -157,28 +153,27 @@ configureStore({
 })
 ```
 
-### Using the extracted `Dispatch` type with React Redux
+### Using the extracted `Dispatch` type with React Redux (Использование извлеченного Dispatchтипа с помощью React Redux)
 
-By default, the React Redux `useDispatch` hook does not contain any types that take middlewares into account. If you need a more specific type for the `dispatch` function when dispatching, you may specify the type of the returned `dispatch` function, or create a custom-typed version of `useSelector`. See [the React Redux documentation](https://react-redux.js.org/using-react-redux/static-typing#typing-the-usedispatch-hook) for details.
+По умолчанию `useDispatch` перехват React Redux не содержит никаких типов, учитывающих промежуточные программы. Если вам нужен более конкретный тип для `dispatch` функции при отправке, вы можете указать тип возвращаемой `dispatch` функции или создать пользовательскую типизированную версию `useSelector.`. See [the React Redux documentation](https://react-redux.js.org/using-react-redux/static-typing#typing-the-usedispatch-hook) for details.
 
 ## `createAction`
 
-For most use cases, there is no need to have a literal definition of `action.type`, so the following can be used:
+Для большинства случаев использования нет необходимости иметь буквальное определение `action.type`, поэтому можно использовать следующее:
 
 ```typescript
 createAction<number>('test')
 ```
 
-This will result in the created action being of type `PayloadActionCreator<number, string>`.
+Это приведет к тому, что созданное действие будет иметь тип `PayloadActionCreator<number, string>`.
 
-In some setups, you will need a literal type for `action.type`, though.
-Unfortunately, TypeScript type definitions do not allow for a mix of manually-defined and inferred type parameters, so you'll have to specify the `type` both in the Generic definition as well as in the actual JavaScript code:
+Однако в некоторых настройках вам понадобится литеральный тип для `action.type`, однако. К сожалению, определения типов в TypeScript не допускают сочетания параметров типа, определенных вручную, и выведенных параметров типа, поэтому вам придется указывать `type` как в общем определении, так и в фактическом коде JavaScript:
 
 ```typescript
 createAction<number, 'test'>('test')
 ```
 
-If you are looking for an alternate way of writing this without the duplication, you can use a prepare callback so that both type parameters can be inferred from arguments, removing the need to specify the action type.
+Если вы ищете альтернативный способ написания этого без дублирования, вы можете использовать обратный вызов prepare, чтобы оба параметра типа могли быть выведены из аргументов, устраняя необходимость указывать тип действия.
 
 ```typescript
 function withPayloadType<T>() {
@@ -187,11 +182,11 @@ function withPayloadType<T>() {
 createAction('test', withPayloadType<string>())
 ```
 
-### Alternative to using a literally-typed `action.type`
+### Alternative to using a literally-typed `action.type` (Альтернатива использованию буквально введенного action.type)
 
-If you are using `action.type` as a discriminator on a discriminated union, for example to correctly type your payload in `case` statements, you might be interested in this alternative:
+Если вы используете `action.type` в качестве дискриминатора дискриминируемое объединение, например, для правильного ввода полезной нагрузки в caseоператорах, вас может заинтересовать эта альтернатива:
 
-Created action creators have a `match` method that acts as a [type predicate](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates):
+У создателей созданных действий есть `match` метод, который действует как a [type predicate](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates):
 
 ```typescript
 const increment = createAction<number>('increment')
@@ -203,11 +198,11 @@ function test(action: Action) {
 }
 ```
 
-This `match` method is also very useful in combination with `redux-observable` and RxJS's `filter` method.
+Этот `match` метод также очень полезен в сочетании с redux-observablefilterметодом и RxJS.
 
 ## `createReducer`
 
-The default way of calling `createReducer` would be with a "lookup table" / "map object", like this:
+Способ вызова по умолчанию `createReducer` будет с помощью "таблицы поиска" / "объекта карты", например:
 
 ```typescript
 createReducer(0, {
@@ -215,7 +210,7 @@ createReducer(0, {
 })
 ```
 
-Unfortunately, as the keys are only strings, using that API TypeScript can neither infer nor validate the action types for you:
+К сожалению, поскольку ключи представляют собой только строки, использование этого API TypeScript не может ни определять, ни проверять типы действий для вас:
 
 ```typescript
 {
@@ -232,11 +227,11 @@ Unfortunately, as the keys are only strings, using that API TypeScript can neith
 }
 ```
 
-As an alternative, RTK includes a type-safe reducer builder API.
+В качестве альтернативы RTK включает типобезопасный API-интерфейс reducer builder.
 
 ### Building Type-Safe Reducer Argument Objects
 
-Instead of using a simple object as an argument to `createReducer`, you can also use a callback that receives a `ActionReducerMapBuilder` instance:
+Вместо того чтобы использовать простой объект в качестве аргумента createReducer, вы также можете использовать обратный вызов , который получает `ActionReducerMapBuilder` экземпляр:
 
 ```typescript {3-10}
 const increment = createAction<number, 'increment'>('increment')
@@ -252,12 +247,12 @@ createReducer(0, (builder) =>
 )
 ```
 
-We recommend using this API if stricter type safety is necessary when defining reducer argument objects.
+Мы рекомендуем использовать этот API, если при определении объектов аргументов редуктора требуется более строгая безопасность типов.
 
 #### Typing `builder.addMatcher`
 
-As the first `matcher` argument to `builder.addMatcher`, a [type predicate](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) function should be used.
-As a result, the `action` argument for the second `reducer` argument can be inferred by TypeScript:
+В качестве первого matcherаргумента `builder.addMatcher` следует использовать функцию, a [type predicate](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) function should be used.
+В результате `action` аргумент для второго reducerаргумента может быть выведен с помощью TypeScript:
 
 ```ts
 function isNumberValueAction(action: AnyAction): action is PayloadAction<{ value: number }> {
@@ -273,8 +268,7 @@ createReducer({ value: 0 }, builder =>
 
 ## `createSlice`
 
-As `createSlice` creates your actions as well as your reducer for you, you don't have to worry about type safety here.
-Action types can just be provided inline:
+As `createSlice` создает ваши действия, а также ваш редуктор для вас, поэтому вам не нужно беспокоиться о безопасности типов здесь. Типы действий могут быть просто предоставлены встроенными:
 
 ```typescript
 const slice = createSlice({
@@ -290,7 +284,7 @@ slice.actions.increment(2)
 slice.caseReducers.increment(0, { type: 'increment', payload: 5 })
 ```
 
-If you have too many case reducers and defining them inline would be messy, or you want to reuse case reducers across slices, you can also define them outside the `createSlice` call and type them as `CaseReducer`:
+Если у вас слишком много редукторов регистра и их встроенное определение было бы запутанным, или вы хотите повторно использовать редукторы регистра в срезах, вы также можете определить их вне `createSlice` вызова и ввести их как `CaseReducer`:
 
 ```typescript
 type State = number
@@ -306,11 +300,11 @@ createSlice({
 })
 ```
 
-### Defining the Initial State Type
+### Defining the Initial State Type (Определение типа начального состояния)
 
-You might have noticed that it is not a good idea to pass your `SliceState` type as a generic to `createSlice`. This is due to the fact that in almost all cases, follow-up generic parameters to `createSlice` need to be inferred, and TypeScript cannot mix explicit declaration and inference of generic types within the same "generic block".
+Возможно, вы заметили, что не стоит передавать ваш `SliceState` тип как общий `createSlice`. Это связано с тем, что почти во всех случаях `createSlice` необходимо определить дополнительные общие параметры, а TypeScript не может смешивать явное объявление и вывод общих типов в одном и том же "общем блоке".
 
-The standard approach is to declare an interface or type for your state, create an initial state value that uses that type, and pass the initial state value to `createSlice`. You can also use the construct `initialState: myInitialState as SliceState`.
+Стандартный подход заключается в объявлении интерфейса или типа для вашего состояния, создании начального значения состояния, которое использует этот тип, и передаче начального значения состояния `createSlice`. Вы также можете использовать конструкцию `initialState: myInitialState as SliceState`.
 
 ```ts {1,4,8,15}
 type SliceState = { state: 'loading' } | { state: 'finished'; data: string }
@@ -332,13 +326,13 @@ createSlice({
 })
 ```
 
-which will result in a `Slice<SliceState, ...>`.
+что приведет к a `Slice<SliceState, ...>`.
 
-### Defining Action Contents with `prepare` Callbacks
+### Defining Action Contents with `prepare` Callbacks (Определение содержимого действия с prepareпомощью обратных вызовов)
 
-If you want to add a `meta` or `error` property to your action, or customize the `payload` of your action, you have to use the `prepare` notation.
+Если вы хотите добавить `metaerror` свойство или к своему действию или настроить `payload` его, вы должны использовать `prepare` обозначение.
 
-Using this notation with TypeScript looks like this:
+Использование этой нотации с TypeScript выглядит следующим образом:
 
 ```ts {5-16}
 const blogSlice = createSlice({
@@ -361,11 +355,11 @@ const blogSlice = createSlice({
 })
 ```
 
-### Generated Action Types for Slices
+### Generated Action Types for Slices (Сгенерированные типы действий для срезов)
 
-As TS cannot combine two string literals (`slice.name` and the key of `actionMap`) into a new literal, all actionCreators created by `createSlice` are of type 'string'. This is usually not a problem, as these types are only rarely used as literals.
+Поскольку TS не может объединить два строковых литерала (`slice.name` и ключ `actionMap` ) в новый литерал, все созданные `createSliceActionCreators` имеют тип 'string'. Обычно это не проблема, поскольку эти типы редко используются в качестве литералов.
 
-In most cases that `type` would be required as a literal, the `slice.action.myAction.match` [type predicate](https://www.typescriptlang.org/docs/handbook/advanced-types.html#using-type-predicates) should be a viable alternative:
+В большинстве случаев, который `type` потребуется в качестве литерала, `slice.action.myAction.match` предикат типа должен быть жизнеспособной альтернативой:
 
 ```ts {10}
 const slice = createSlice({
@@ -383,13 +377,13 @@ function myCustomMiddleware(action: Action) {
 }
 ```
 
-If you actually _need_ that type, unfortunately there is no other way than manual casting.
+Если вам действительно нужен этот тип, к сожалению, нет другого способа, кроме ручного приведения.
 
-### Type safety with `extraReducers`
+### Type safety with `extraReducers` (Безопасность типа с extraReducers)
 
-Reducer lookup tables that map an action `type` string to a reducer function are not easy to fully type correctly. This affects both `createReducer` and the `extraReducers` argument for `createSlice`. So, like with `createReducer`, [you may also use the "builder callback" approach](#building-type-safe-reducer-argument-objects) for defining the reducer object argument.
+Таблицы подстановки редуктора, которые сопоставляют строку действия `type` с функцией редуктора, нелегко полностью правильно ввести. Это влияет как `createReducer` на, так и на `extraReducers` аргумент для `createSlice`. Итак, как и в случае с `createReducer`, [you may also use the "builder callback" approach](#building-type-safe-reducer-argument-objects) для определения аргумента объекта `reducer` .
 
-This is particularly useful when a slice reducer needs to handle action types generated by other slices, or generated by specific calls to `createAction` (such as the actions generated by [`createAsyncThunk`](../api/createAsyncThunk.mdx)).
+Это особенно полезно, когда редуктору среза необходимо обрабатывать типы действий, сгенерированные другими срезами или сгенерированные конкретными вызовами `createAction` (например, действиями, сгенерированными [`createAsyncThunk`](../api/createAsyncThunk.mdx)).
 
 ```ts {27-30}
 const fetchUserById = createAsyncThunk(
@@ -426,13 +420,13 @@ const usersSlice = createSlice({
 })
 ```
 
-Like the `builder` in `createReducer`, this `builder` also accepts `addMatcher` (see [typing `builder.matcher`](#typing-builderaddmatcher)) and `addDefaultCase`.
+Как и конструктор в `createReducer`, этот конструктор также принимает `addMatcher` (see [typing `builder.matcher`](#typing-builderaddmatcher)) и `addDefaultCase`.
 
-### Wrapping `createSlice`
+### Wrapping `createSlice` (Обертывание `createSlice`)
 
-If you need to reuse reducer logic, it is common to write ["higher-order reducers"](https://redux.js.org/recipes/structuring-reducers/reusing-reducer-logic#customizing-behavior-with-higher-order-reducers) that wrap a reducer function with additional common behavior. This can be done with `createSlice` as well, but due to the complexity of the types for `createSlice`, you have to use the `SliceCaseReducers` and `ValidateSliceCaseReducers` types in a very specific way.
+Если вам нужно повторно использовать логику редуктора, обычно пишется ["higher-order reducers"](https://redux.js.org/recipes/structuring-reducers/reusing-reducer-logic#customizing-behavior-with-higher-order-reducers) которые оборачивают функцию-редуктор дополнительным общим поведением. Это также можно сделать с помощью `createSlice`, но из-за сложности типов для `createSlice` вам придется использовать типы `SliceCaseReducers` и` ValidateSliceCaseReducers` очень специфическим образом.
 
-Here is an example of such a "generic" wrapped `createSlice` call:
+Вот пример такого "универсального" обернутого вызова createSlice:
 
 ```ts
 interface GenericState<T> {
